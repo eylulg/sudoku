@@ -1,0 +1,30 @@
+.available-digits {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+
+  .digit-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #cdcfd0;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #e6e6e6;
+    }
+
+    &:disabled {
+      background-color: #eaecee;
+      color: #ccc;
+      cursor: initial;
+    }
+  }
+}
