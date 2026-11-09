@@ -6,6 +6,8 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Served from https://eylulg.github.io/sudoku/ on GitHub Pages.
+  base: '/sudoku/',
   plugins: [vue(), vueJsx()],
   resolve: {
     alias: {
