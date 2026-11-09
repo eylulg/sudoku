@@ -42,6 +42,7 @@ export default defineComponent({
         </p>
         <button
           class='timer-button'
+          aria-label={timer.isRunning ? 'Pause timer' : 'Resume timer'}
           onClick={toggleTimer}
           disabled={!timer.hasStarted}
         >

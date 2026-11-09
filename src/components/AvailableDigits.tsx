@@ -45,7 +45,12 @@ export default defineComponent({
     const handleDigitSelection = (digit: number) => {
       const { row, col } = sudokuPuzzle.activeCell;
 
-      if (row !== null && col !== null && digit) {
+      if (
+        row !== null &&
+        col !== null &&
+        digit &&
+        !sudokuPuzzle.grid[row][col].prefilled
+      ) {
         updateCell(row, col, digit);
         setActiveCell(null, null);
         checkAndFinishGame();

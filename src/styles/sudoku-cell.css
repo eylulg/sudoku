@@ -9,13 +9,17 @@
     border-right: 2px solid #afb1b3;
   }
 
-  &:disabled {
+  /* Given cells are read only (not disabled) so keyboard and screen reader
+     users can still reach them. */
+  &:disabled,
+  &[readonly] {
     background-color: #eaecee;
     color: #000;
   }
 
   &:focus-visible {
-    outline-color: #757677;
+    outline: 3px solid #1f6feb;
+    outline-offset: -3px;
   }
 
   &.error {
