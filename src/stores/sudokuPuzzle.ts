@@ -117,7 +117,7 @@ const clearPreviousErrors = (
     if (i !== col && sudokuPuzzle.grid[row][i].value === oldValue) {
       sudokuPuzzle.grid[row][i].error = false;
     }
-    if ((i !== row && sudokuPuzzle.grid[i][col].value) === oldValue) {
+    if (i !== row && sudokuPuzzle.grid[i][col].value === oldValue) {
       sudokuPuzzle.grid[i][col].error = false;
     }
   }
@@ -214,11 +214,15 @@ export const updateCell = (
   sudokuPuzzle.grid[row][col].value = newValue;
   recalculateErrors(row, col, oldValue, newValue);
 
+  // Entering the value a cell already has changes nothing, so it does not
+  // score again (this used to award points for every repeated click).
+  if (newValue === oldValue) return;
+
   const correctValue = sudokuPuzzle.solution[row][col].value;
 
   if (newValue === correctValue) {
     sudokuPuzzle.score += CORRECT_CELL_POINTS;
-  } else if (newValue !== oldValue) {
+  } else {
     sudokuPuzzle.score -= ERROR_DEDUCTION;
   }
 };
