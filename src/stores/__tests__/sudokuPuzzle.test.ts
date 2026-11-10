@@ -36,6 +36,10 @@ const loadPuzzle = (emptyCells: Array<[number, number]>) => {
     difficulty: 'beginner',
     score: INITIAL_SCORE,
     hintsUsed: 0,
+    scoredCells: [],
+    finished: false,
+    result: null,
+    notice: '',
     activeCell: { row: null, col: null },
     history: [],
     future: [],
@@ -50,7 +54,6 @@ const wrongDigit = (solution: SudokuCell[][], row: number, col: number) =>
 describe('sudoku puzzle store', () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    vi.stubGlobal('alert', vi.fn());
     leaderboard.value = initializeLeaderboard();
     localStorage.clear();
     timer.time = 0;
@@ -80,6 +83,17 @@ describe('sudoku puzzle store', () => {
         [4, 4],
       ]);
       updateCell(0, 0, solution[0][0].value);
+      updateCell(0, 0, solution[0][0].value);
+      expect(sudokuPuzzle.score).toBe(INITIAL_SCORE + CORRECT_CELL_POINTS);
+    });
+
+    it('scores a cell once when it is cleared and retyped', () => {
+      const solution = loadPuzzle([
+        [0, 0],
+        [4, 4],
+      ]);
+      updateCell(0, 0, solution[0][0].value);
+      updateCell(0, 0, null);
       updateCell(0, 0, solution[0][0].value);
       expect(sudokuPuzzle.score).toBe(INITIAL_SCORE + CORRECT_CELL_POINTS);
     });
@@ -181,8 +195,20 @@ describe('sudoku puzzle store', () => {
       const expected = INITIAL_SCORE - BASE_HINT_DEDUCTION - 42;
       expect(sudokuPuzzle.grid[3][3].value).toBe(solution[3][3].value);
       expect(leaderboard.value.beginner).toEqual([{ score: expected }]);
-      vi.advanceTimersByTime(500);
-      expect(window.alert).toHaveBeenCalledOnce();
+      expect(sudokuPuzzle.finished).toBe(true);
+    });
+
+    it('locks the board and writes the leaderboard once after completion', () => {
+      const solution = loadPuzzle([[3, 3]]);
+      updateCell(3, 3, solution[3][3].value);
+      const scoreAtFinish = sudokuPuzzle.score;
+
+      updateCell(3, 3, null);
+      updateCell(3, 3, solution[3][3].value);
+
+      expect(sudokuPuzzle.grid[3][3].value).toBe(solution[3][3].value);
+      expect(sudokuPuzzle.score).toBe(scoreAtFinish);
+      expect(leaderboard.value.beginner).toHaveLength(1);
     });
 
     it('keeps the three best scores per difficulty', () => {

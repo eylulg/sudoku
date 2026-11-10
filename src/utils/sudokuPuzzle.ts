@@ -253,3 +253,6 @@ export const removeCompleteClass = () => {
     });
   }
 };
+
+export const formatDifficulty = (difficulty: string) =>
+  difficulty.charAt(0).toUpperCase() + difficulty.slice(1);

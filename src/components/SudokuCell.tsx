@@ -1,10 +1,6 @@
 import { defineComponent, type PropType } from 'vue';
 
-import {
-  checkAndFinishGame,
-  setActiveCell,
-  updateCell,
-} from '@/stores/sudokuPuzzle';
+import { setActiveCell, sudokuPuzzle, updateCell } from '@/stores/sudokuPuzzle';
 
 import '@/styles/sudoku-cell.css';
 
@@ -56,7 +52,6 @@ export default defineComponent({
       value: number | null,
     ) => {
       updateCell(row, col, value);
-      checkAndFinishGame();
     };
 
     const isValidInput = (input: string) => /^[1-9]?$/.test(input);
@@ -126,7 +121,7 @@ export default defineComponent({
         aria-invalid={props.cell.error ? 'true' : undefined}
         tabindex={props.isTabStop ? 0 : -1}
         value={props.cell.value === 0 ? '' : props.cell.value}
-        readonly={props.cell.prefilled}
+        readonly={props.cell.prefilled || sudokuPuzzle.finished}
         onFocus={handleFocus}
         onKeydown={handleKeydown}
         onInput={(e) =>

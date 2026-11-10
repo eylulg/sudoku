@@ -1,11 +1,6 @@
 import { computed, defineComponent } from 'vue';
 
-import {
-  checkAndFinishGame,
-  setActiveCell,
-  sudokuPuzzle,
-  updateCell,
-} from '@/stores/sudokuPuzzle';
+import { setActiveCell, sudokuPuzzle, updateCell } from '@/stores/sudokuPuzzle';
 
 import { SUDOKU_GRID_SIZE } from '@/constants/sudoku';
 
@@ -53,7 +48,6 @@ export default defineComponent({
       ) {
         updateCell(row, col, digit);
         setActiveCell(null, null);
-        checkAndFinishGame();
       }
     };
 
@@ -69,7 +63,8 @@ export default defineComponent({
             }}
             disabled={
               !isDigitAvailableForSelection(digit) ||
-              sudokuPuzzle.difficulty === ''
+              sudokuPuzzle.difficulty === '' ||
+              sudokuPuzzle.finished
             }
           >
             {digit}
