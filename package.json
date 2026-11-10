@@ -18,6 +18,7 @@
     "format:check": "prettier --check src/"
   },
   "dependencies": {
+    "@eylulg/ui": "file:../ui",
     "vue": "^3.5.45"
   },
   "devDependencies": {

@@ -1,29 +1,32 @@
 .grid-cell {
-  width: 40px;
-  height: 40px;
+  width: var(--cell-size, 40px);
+  height: var(--cell-size, 40px);
+  box-sizing: border-box;
   text-align: center;
-  border: 1px solid #cdcfd0;
-  font-size: 1.1rem;
+  border: 1px solid var(--ui-border-control);
+  font-size: var(--text-md);
+  color: var(--ui-text-primary);
+  background-color: var(--ui-bg-primary);
 
   &.border-right {
-    border-right: 2px solid #afb1b3;
+    border-right: 2px solid var(--ui-border-strong);
   }
 
   /* Given cells are read only (not disabled) so keyboard and screen reader
      users can still reach them. */
   &:disabled,
   &[readonly] {
-    background-color: #eaecee;
-    color: #000;
+    background-color: var(--ui-bg-disabled);
+    color: var(--ui-text-primary);
   }
 
   &:focus-visible {
-    outline: 3px solid #1f6feb;
+    outline: 3px solid var(--ui-border-focus);
     outline-offset: -3px;
   }
 
   &.error {
-    background-color: #d8837a;
+    background-color: var(--ui-bg-error-subtle);
   }
 
   &.highlight {
@@ -38,20 +41,26 @@
 @keyframes blink {
   0%,
   100% {
-    background-color: #fff;
+    background-color: var(--ui-bg-primary);
   }
   25%,
   75% {
-    background-color: #85c1e9;
+    background-color: var(--ui-bg-brand-subtle);
   }
 }
 
 @keyframes fadeIn {
   0% {
-    background-color: #fff;
+    background-color: var(--ui-bg-primary);
   }
   50%,
   100% {
-    background-color: #7dcea0;
+    background-color: var(--ui-bg-success-subtle);
+  }
+}
+
+@media (max-width: 420px) {
+  :root {
+    --cell-size: 33px;
   }
 }

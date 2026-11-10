@@ -2,11 +2,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   padding: 24px 16px;
-  border-bottom: 1px solid #eaecee;
+  border-bottom: 1px solid var(--ui-border-subtle);
 
   .score {
-    font-size: 1rem;
+    font-size: var(--text-md);
   }
 
   .action-buttons {
@@ -15,20 +17,22 @@
 
     .undo-button,
     .redo-button {
-      background-color: #f0f0f0;
+      color: var(--ui-text-primary);
+      background-color: var(--ui-bg-tertiary);
       padding: 8px 12px;
-      font-size: 0.875rem;
+      font-size: var(--text-sm);
       border: none;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       transition: background-color 0.2s;
       cursor: pointer;
 
       &:hover {
-        background-color: #e6e6e6;
+        background-color: var(--ui-bg-hover);
       }
 
       &:disabled {
-        background-color: #d5d8dc;
+        background-color: var(--ui-bg-disabled);
+        color: var(--ui-text-disabled);
         cursor: initial;
       }
     }
@@ -36,20 +40,21 @@
 
   .hint-button {
     padding: 8px 12px;
-    background-color: #3498db;
-    color: white;
+    background-color: var(--ui-bg-brand-solid);
+    color: var(--ui-fg-on-solid);
     border: none;
-    border-radius: 6px;
-    font-size: 0.875rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
     transition: background-color 0.2s;
     cursor: pointer;
 
     &:hover {
-      background-color: #2e85c0;
+      background-color: var(--ui-bg-brand-solid-hover);
     }
 
     &:disabled {
-      background-color: #d5d8dc;
+      background-color: var(--ui-bg-disabled);
+      color: var(--ui-text-disabled);
       cursor: initial;
     }
   }
@@ -65,7 +70,24 @@
   }
 
   .leaderboard-container {
-    border-left: 1px solid #eaecee;
+    border-left: 1px solid var(--ui-border-subtle);
     flex: 1;
+  }
+}
+
+@media (max-width: 720px) {
+  .sudoku-puzzle-container {
+    flex-direction: column;
+    gap: 24px;
+
+    .sudoku-container {
+      margin-right: 0;
+    }
+
+    .leaderboard-container {
+      border-left: none;
+      border-top: 1px solid var(--ui-border-subtle);
+      padding-top: 16px;
+    }
   }
 }

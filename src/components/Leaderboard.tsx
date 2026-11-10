@@ -15,12 +15,12 @@ const Leaderboard = defineComponent({
 
     return () => (
       <div class='leaderboard'>
-        <h3>Leaderboard</h3>
+        <h2>Leaderboard</h2>
         <>
           {filteredEntries.value.length > 0 ? (
             filteredEntries.value.map(([difficulty, scores]) => (
               <div key={difficulty} class='leaderboard-section'>
-                <h5>{difficulty}</h5>
+                <h3>{difficulty}</h3>
                 <ol>
                   {scores.map((entry, index) => (
                     <li key={`${difficulty}-${index}`}>{entry.score}</li>
