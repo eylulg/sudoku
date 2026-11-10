@@ -1,15 +1,20 @@
 import { defineComponent } from 'vue';
 
+import SiteFooter from './components/SiteFooter';
+import SiteHeader from './components/SiteHeader';
 import SudokuPuzzle from './views/SudokuPuzzle';
 
 export default defineComponent({
   name: 'App',
   setup() {
     return () => (
-      <main>
-        <h1 class='visually-hidden'>Sudoku</h1>
-        <SudokuPuzzle />
-      </main>
+      <>
+        <SiteHeader />
+        <main>
+          <SudokuPuzzle />
+        </main>
+        <SiteFooter />
+      </>
     );
   },
 });
