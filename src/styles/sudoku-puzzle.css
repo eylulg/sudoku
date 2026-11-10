@@ -60,6 +60,50 @@
   }
 }
 
+.notice {
+  min-height: 1.5em;
+  margin: 8px 16px 0;
+  font-size: var(--text-sm);
+  color: var(--ui-text-secondary);
+}
+
+.completion {
+  margin: 16px;
+  padding: 16px;
+  border: 1px solid var(--ui-border-strong);
+  border-radius: var(--radius-sm);
+  background-color: var(--ui-bg-success-subtle);
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: var(--text-md);
+  }
+
+  p {
+    margin: 0 0 12px;
+    font-size: var(--text-sm);
+  }
+
+  .play-again-button {
+    padding: 8px 12px;
+    background-color: var(--ui-bg-brand-solid);
+    color: var(--ui-fg-on-solid);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--ui-bg-brand-solid-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ui-border-focus);
+      outline-offset: 2px;
+    }
+  }
+}
+
 .sudoku-puzzle-container {
   display: flex;
   padding: 24px 16px 0;
@@ -79,6 +123,7 @@
   .sudoku-puzzle-container {
     flex-direction: column;
     gap: 24px;
+    padding-inline: 0;
 
     .sudoku-container {
       margin-right: 0;
