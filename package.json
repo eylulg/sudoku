@@ -16,7 +16,7 @@
     "ci:lint": "eslint --max-warnings 0 .",
     "format": "prettier --write src/",
     "format:check": "prettier --check src/",
-    "relink": "npm install ../ui --install-links",
+    "relink": "rm -rf node_modules/@eylulg/ui && npm install ../ui --install-links",
     "prepare": "husky",
     "knip": "knip"
   },
