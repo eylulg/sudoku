@@ -60,7 +60,7 @@ State lives in small reactive stores in `src/stores` (`reactive` and `ref` from 
 
 ## Run it
 
-Requires Node 24 and the `ui` repository checked out next to this one (`../ui`, built with `npm run build`), because `@eylulg/ui` is installed as `file:../ui`. CI checks both out side by side. Once the library is published, the dependency switches to the npm version `^1.0.0`; the GitHub Pages deploy keeps working with the sibling checkout until then.
+Requires Node 24 and the `ui` repository checked out next to this one (`../ui`, built with `npm run build`), because `@eylulg/ui` is installed as `file:../ui`, as a copy (`npm install ../ui --install-links`; run `npm run relink` after rebuilding the library). CI checks both out side by side. Once the library is published, the dependency switches to the npm version `^1.0.0`; the GitHub Pages deploy keeps working with the sibling checkout until then.
 
 ```bash
 npm install

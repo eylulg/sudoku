@@ -1,5 +1,6 @@
 @import '@eylulg/ui/fonts.css';
 @import '@eylulg/ui/tokens.css';
+@import '@eylulg/ui/reset.css';
 @import '@eylulg/ui/themes/sudoku.css';
 @import './base.css';
 
