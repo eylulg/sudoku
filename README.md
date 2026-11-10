@@ -54,11 +54,13 @@ The constants are in [`src/constants/sudoku.ts`](src/constants/sudoku.ts).
 - [Vitest 3](https://vitest.dev) with jsdom and Vue Test Utils
 - ESLint 9 (flat config with `eslint-plugin-vue`) and Prettier
 
+Styling uses the design tokens and the Sudoku theme variant of `@eylulg/ui` (compiled stylesheet plus plain CSS variables, no React). Dark mode is the `dark-mode` class on `<html>`, set before first paint by the library's theme script.
+
 State lives in small reactive stores in `src/stores` (`reactive` and `ref` from Vue), without a state library.
 
 ## Run it
 
-Requires Node 24.
+Requires Node 24 and the `ui` repository checked out next to this one (`../ui`, built with `npm run build`), because `@eylulg/ui` is installed as `file:../ui`. CI checks both out side by side. Once the library is published, the dependency switches to the npm version `^1.0.0`; the GitHub Pages deploy keeps working with the sibling checkout until then.
 
 ```bash
 npm install
@@ -75,6 +77,7 @@ npm run test:unit    # watch mode
 npm run type-check
 npm run lint         # ESLint with --fix
 npm run format:check
+npm run knip         # unused files, exports and dependencies
 ```
 
 The tests cover the timer, the generator (valid full grids, solution counting, unique solutions and visible cell counts per difficulty), the puzzle store (scoring, error marking, growing hint costs, undo and redo, finishing a game and the leaderboard), the leaderboard storage helpers, and keyboard navigation and labels in the grid.

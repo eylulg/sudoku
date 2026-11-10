@@ -1,0 +1,37 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      lint-and-format:
+        patterns:
+          [
+            'eslint*',
+            '@eslint/*',
+            '@vue/eslint-config-*',
+            'prettier*',
+            'knip',
+            '@commitlint/*',
+            'husky',
+            'lint-staged',
+          ]
+      test:
+        patterns: ['vitest*', '@vitest/*', '@vue/test-utils', 'jsdom']
+      build:
+        patterns:
+          ['vite', '@vitejs/*', 'typescript', 'vue-tsc', 'vue', '@vue/tsconfig']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ['*']

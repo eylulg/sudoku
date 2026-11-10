@@ -30,3 +30,7 @@ coverage
 *.tsbuildinfo
 
 test-results/
+
+.env
+.env.*
+!.env.example

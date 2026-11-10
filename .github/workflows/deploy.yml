@@ -17,12 +17,25 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sudoku
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: sudoku
+      - uses: actions/checkout@v4
+        with:
+          repository: eylulg/ui
+          path: ui
       - uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
-          cache: npm
+          node-version-file: sudoku/.nvmrc
+      - name: Build ui
+        working-directory: ui
+        run: |
+          npm ci
+          npm run build
       - run: npm ci
       - run: npm run build
       - name: Add SPA fallback
@@ -30,7 +43,7 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: sudoku/dist
 
   deploy:
     needs: build

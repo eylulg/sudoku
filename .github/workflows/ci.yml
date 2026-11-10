@@ -11,12 +11,26 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sudoku
     steps:
+      # The app depends on file:../ui, so the library is checked out next to it.
       - uses: actions/checkout@v4
+        with:
+          path: sudoku
+      - uses: actions/checkout@v4
+        with:
+          repository: eylulg/ui
+          path: ui
       - uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
-          cache: npm
+          node-version-file: sudoku/.nvmrc
+      - name: Build ui
+        working-directory: ui
+        run: |
+          npm ci
+          npm run build
       - run: npm ci
       - name: Type check
         run: npm run type-check
@@ -24,7 +38,32 @@ jobs:
         run: npm run ci:lint
       - name: Format
         run: npm run format:check
+      - name: Unused code
+        run: npm run knip
       - name: Test
         run: npm test
       - name: Build
         run: npm run build-only
+
+  commitlint:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: npm install --no-save --no-package-lock --ignore-scripts @commitlint/cli @commitlint/config-conventional
+      - run: npx --no -- commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
