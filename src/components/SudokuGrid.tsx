@@ -47,14 +47,13 @@ export default defineComponent({
         <div class='grid-container'>
           {sudokuPuzzle.difficulty === '' && (
             <div class='overlay'>
-              <span class='overlay-message'>
-                Please select a difficulty to start
-              </span>
+              <span class='overlay-message'>Choose a difficulty to start</span>
             </div>
           )}
           <div
             class='grid'
             role='group'
+            inert={sudokuPuzzle.difficulty === ''}
             aria-label='Sudoku grid. Use the arrow keys to move between cells.'
           >
             {sudokuPuzzle.grid.map((row, rowIndex) => (

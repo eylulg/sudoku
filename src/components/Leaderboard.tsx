@@ -2,6 +2,8 @@ import { computed, defineComponent } from 'vue';
 
 import { leaderboard } from '@/stores/leaderboard';
 
+import { formatDifficulty } from '@/utils/sudokuPuzzle';
+
 import '@/styles/leaderboard.css';
 
 const Leaderboard = defineComponent({
@@ -20,7 +22,7 @@ const Leaderboard = defineComponent({
           {filteredEntries.value.length > 0 ? (
             filteredEntries.value.map(([difficulty, scores]) => (
               <div key={difficulty} class='leaderboard-section'>
-                <h3>{difficulty}</h3>
+                <h3>{formatDifficulty(difficulty)}</h3>
                 <ol>
                   {scores.map((entry, index) => (
                     <li key={`${difficulty}-${index}`}>{entry.score}</li>
@@ -29,7 +31,7 @@ const Leaderboard = defineComponent({
               </div>
             ))
           ) : (
-            <p>No scores yet. Be the first to score!</p>
+            <p>No scores yet.</p>
           )}
         </>
       </div>

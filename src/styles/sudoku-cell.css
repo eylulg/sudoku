@@ -59,8 +59,8 @@
   }
 }
 
-@media (max-width: 420px) {
-  :root {
-    --cell-size: 33px;
-  }
+:root {
+  /* Nine cells plus the page gutters must fit at 320 px, so cells shrink to
+     30 px before the grid would have to scroll. */
+  --cell-size: clamp(30px, calc((100vw - 48px) / 9), 40px);
 }

@@ -14,7 +14,6 @@
     h3 {
       font-size: var(--text-sm);
       font-weight: normal;
-      text-transform: capitalize;
       margin: 0;
     }
 
