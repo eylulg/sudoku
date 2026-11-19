@@ -26,9 +26,7 @@ describe('leaderboard utils', () => {
       hard: [{ score: 420 }, { score: 300 }],
     };
     saveLeaderboard(leaderboard);
-    expect(JSON.parse(localStorage.getItem(LEADERBOARD_STORAGE_KEY)!)).toEqual(
-      leaderboard,
-    );
+    expect(JSON.parse(localStorage.getItem(LEADERBOARD_STORAGE_KEY)!)).toEqual(leaderboard);
     expect(getLeaderboard()).toEqual(leaderboard);
   });
 

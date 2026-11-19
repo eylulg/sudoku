@@ -29,19 +29,13 @@ const isCell = (value: unknown): value is SudokuCell =>
 const isGrid = (value: unknown): value is SudokuCell[][] =>
   Array.isArray(value) &&
   value.length === SUDOKU_GRID_SIZE &&
-  value.every(
-    (row) =>
-      Array.isArray(row) &&
-      row.length === SUDOKU_GRID_SIZE &&
-      row.every(isCell),
-  );
+  value.every((row) => Array.isArray(row) && row.length === SUDOKU_GRID_SIZE && row.every(isCell));
 
 const isCount = (value: unknown): value is number =>
   typeof value === 'number' && Number.isFinite(value);
 
 const isResult = (value: unknown): value is SavedGame['result'] =>
-  value === null ||
-  (isRecord(value) && isCount(value.score) && isCount(value.time));
+  value === null || (isRecord(value) && isCount(value.score) && isCount(value.time));
 
 const isSavedGame = (value: unknown): value is SavedGame =>
   isRecord(value) &&

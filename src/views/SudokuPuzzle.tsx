@@ -44,10 +44,8 @@ export default defineComponent({
       },
     );
 
-    const isUndoDisabled = () =>
-      sudokuPuzzle.finished || sudokuPuzzle.history.length === 0;
-    const isRedoDisabled = () =>
-      sudokuPuzzle.finished || sudokuPuzzle.future.length === 0;
+    const isUndoDisabled = () => sudokuPuzzle.finished || sudokuPuzzle.history.length === 0;
+    const isRedoDisabled = () => sudokuPuzzle.finished || sudokuPuzzle.future.length === 0;
     const isHintDisabled = () =>
       sudokuPuzzle.finished ||
       sudokuPuzzle.hintsUsed >= MAX_HINTS ||
@@ -124,11 +122,7 @@ export default defineComponent({
             </button>
           </div>
 
-          <button
-            class='hint-button'
-            onClick={handleHint}
-            disabled={isHintDisabled()}
-          >
+          <button class='hint-button' onClick={handleHint} disabled={isHintDisabled()}>
             Hint ({MAX_HINTS - sudokuPuzzle.hintsUsed})
           </button>
         </div>
@@ -142,16 +136,11 @@ export default defineComponent({
             <section class='completion' aria-labelledby='completion-title'>
               <h2 id='completion-title'>Puzzle solved</h2>
               <p>
-                Time {formatTime(sudokuPuzzle.result.time)}. Final score{' '}
-                {sudokuPuzzle.result.score}, which is {sudokuPuzzle.score}{' '}
-                points minus {sudokuPuzzle.result.time} seconds. Difficulty{' '}
-                {formatDifficulty(sudokuPuzzle.difficulty).toLowerCase()}.
+                Time {formatTime(sudokuPuzzle.result.time)}. Final score {sudokuPuzzle.result.score}
+                , which is {sudokuPuzzle.score} points minus {sudokuPuzzle.result.time} seconds.
+                Difficulty {formatDifficulty(sudokuPuzzle.difficulty).toLowerCase()}.
               </p>
-              <button
-                ref={playAgainButton}
-                class='play-again-button'
-                onClick={handlePlayAgain}
-              >
+              <button ref={playAgainButton} class='play-again-button' onClick={handlePlayAgain}>
                 Play again
               </button>
             </section>
