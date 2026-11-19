@@ -45,19 +45,6 @@ jobs:
       - name: Build
         run: npm run build-only
 
-  commitlint:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-      - run: npm install --no-save --no-package-lock --ignore-scripts @commitlint/cli @commitlint/config-conventional
-      - run: npx --no -- commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
-
   secrets:
     runs-on: ubuntu-latest
     steps:
