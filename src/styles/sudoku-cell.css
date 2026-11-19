@@ -1,25 +1,32 @@
 .grid-cell {
-  width: 40px;
-  height: 40px;
+  width: var(--cell-size, 40px);
+  height: var(--cell-size, 40px);
+  box-sizing: border-box;
   text-align: center;
-  border: 1px solid #cdcfd0;
-  font-size: 1.1rem;
+  border: 1px solid var(--ui-border-control);
+  font-size: var(--text-md);
+  color: var(--ui-text-primary);
+  background-color: var(--ui-bg-primary);
 
   &.border-right {
-    border-right: 2px solid #afb1b3;
+    border-right: 2px solid var(--ui-border-strong);
   }
 
-  &:disabled {
-    background-color: #eaecee;
-    color: #000;
+  /* Given cells are read only (not disabled) so keyboard and screen reader
+     users can still reach them. */
+  &:disabled,
+  &[readonly] {
+    background-color: var(--ui-bg-disabled);
+    color: var(--ui-text-primary);
   }
 
   &:focus-visible {
-    outline-color: #757677;
+    outline: 3px solid var(--ui-border-focus);
+    outline-offset: -3px;
   }
 
   &.error {
-    background-color: #d8837a;
+    background-color: var(--ui-bg-error-subtle);
   }
 
   &.highlight {
@@ -34,20 +41,26 @@
 @keyframes blink {
   0%,
   100% {
-    background-color: #fff;
+    background-color: var(--ui-bg-primary);
   }
   25%,
   75% {
-    background-color: #85c1e9;
+    background-color: var(--ui-bg-brand-subtle);
   }
 }
 
 @keyframes fadeIn {
   0% {
-    background-color: #fff;
+    background-color: var(--ui-bg-primary);
   }
   50%,
   100% {
-    background-color: #7dcea0;
+    background-color: var(--ui-bg-success-subtle);
   }
+}
+
+:root {
+  /* Nine cells plus the page gutters must fit at 320 px, so cells shrink to
+     30 px before the grid would have to scroll. */
+  --cell-size: clamp(30px, calc((100vw - 48px) / 9), 40px);
 }

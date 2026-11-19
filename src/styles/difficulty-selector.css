@@ -4,25 +4,79 @@
   gap: 8px;
 
   label {
-    font-size: 1rem;
+    font-size: var(--text-md);
     font-weight: bold;
   }
 
   select {
     padding: 8px 12px;
-    font-size: 0.875rem;
-    background-color: #f0f0f0;
+    font-size: var(--text-sm);
+    color: var(--ui-text-primary);
+    background-color: var(--ui-bg-tertiary);
     border: none;
-    border-radius: 6px;
-    text-transform: capitalize;
+    border-radius: var(--radius-sm);
 
     &:hover {
-      background-color: #e6e6e6;
+      background-color: var(--ui-bg-hover);
       cursor: pointer;
     }
 
     &:focus-visible {
-      outline-color: #757677;
+      outline: 2px solid var(--ui-border-focus);
+      outline-offset: 2px;
     }
+  }
+}
+
+.confirm-dialog {
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 24px;
+  color: var(--ui-text-primary);
+  background-color: var(--ui-bg-primary);
+  border: 1px solid var(--ui-border-strong);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+
+  &::backdrop {
+    background-color: var(--ui-bg-overlay);
+  }
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: var(--text-md);
+  }
+
+  p {
+    margin: 0 0 16px;
+    font-size: var(--text-sm);
+  }
+
+  .confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--ui-border-focus);
+      outline-offset: 2px;
+    }
+  }
+
+  .confirm-cancel {
+    color: var(--ui-text-primary);
+    background-color: var(--ui-bg-tertiary);
+  }
+
+  .confirm-accept {
+    color: var(--ui-fg-on-solid);
+    background-color: var(--ui-bg-brand-solid);
   }
 }

@@ -5,25 +5,26 @@
   gap: 8px;
 
   .timer-text {
-    font-size: 1rem;
+    font-size: var(--text-md);
   }
 
   .timer-button {
     padding: 2px 8px 4px;
-    background-color: #3498db;
-    color: white;
+    background-color: var(--ui-bg-brand-solid);
+    color: var(--ui-fg-on-solid);
     border: none;
-    border-radius: 6px;
-    font-size: 0.875rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
     transition: background-color 0.2s;
     cursor: pointer;
 
     &:hover {
-      background-color: #2e85c0;
+      background-color: var(--ui-bg-brand-solid-hover);
     }
 
     &:disabled {
-      background-color: #d5d8dc;
+      background-color: var(--ui-bg-disabled);
+      color: var(--ui-text-disabled);
       cursor: initial;
     }
   }

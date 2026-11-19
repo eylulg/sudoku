@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive, watch } from 'vue';
 
 import { saveScoreToLeaderboard } from './leaderboard';
 import {
@@ -8,6 +8,8 @@ import {
   stopTimer,
   timer,
 } from './timer';
+
+import { loadSavedGame, saveGame, type SavedGame } from '@/utils/savedGame';
 
 import {
   addCompleteClass,
@@ -25,11 +27,19 @@ import {
   ERROR_DEDUCTION,
   BASE_HINT_DEDUCTION,
   HINT_DEDUCTION_INCREMENT,
+  MAX_HINTS,
   SUDOKU_GRID_SIZE,
   SUDOKU_SUBGRID_SIZE,
 } from '@/constants/sudoku';
 
 type ActiveCell = { row: number | null; col: number | null };
+
+interface Snapshot {
+  grid: SudokuCell[][];
+  score: number;
+  hintsUsed: number;
+  scoredCells: string[];
+}
 
 interface SudokuPuzzle {
   grid: SudokuCell[][];
@@ -37,10 +47,16 @@ interface SudokuPuzzle {
   difficulty: Difficulty;
   score: number;
   hintsUsed: number;
+  scoredCells: string[];
   activeCell: ActiveCell;
-  history: SudokuCell[][][];
-  future: SudokuCell[][][];
+  history: Snapshot[];
+  future: Snapshot[];
+  finished: boolean;
+  result: { score: number; time: number } | null;
+  notice: string;
 }
+
+const cellKey = (row: number, col: number) => `${row},${col}`;
 
 export const sudokuPuzzle = reactive<SudokuPuzzle>({
   grid: createEmptyGrid(),
@@ -48,18 +64,26 @@ export const sudokuPuzzle = reactive<SudokuPuzzle>({
   difficulty: '',
   score: INITIAL_SCORE,
   hintsUsed: 0,
+  scoredCells: [],
   activeCell: { row: null, col: null },
   history: [],
   future: [],
+  finished: false,
+  result: null,
+  notice: '',
 });
 
 const resetSudokuPuzzle = (difficulty: Difficulty) => {
   sudokuPuzzle.difficulty = difficulty;
   sudokuPuzzle.score = INITIAL_SCORE;
   sudokuPuzzle.hintsUsed = 0;
+  sudokuPuzzle.scoredCells = [];
   sudokuPuzzle.activeCell = { row: null, col: null };
   sudokuPuzzle.history = [];
   sudokuPuzzle.future = [];
+  sudokuPuzzle.finished = false;
+  sudokuPuzzle.result = null;
+  sudokuPuzzle.notice = '';
 };
 
 const initializeGrid = (difficulty: Difficulty) => {
@@ -81,31 +105,49 @@ export const setDifficulty = (difficulty: Difficulty) => {
   initializeTimer();
 };
 
+const findHintTarget = (): [number, number] | null => {
+  const { row, col } = sudokuPuzzle.activeCell;
+  if (row !== null && col !== null && sudokuPuzzle.grid[row][col].value === 0) {
+    return [row, col];
+  }
+
+  for (let r = 0; r < SUDOKU_GRID_SIZE; r++) {
+    for (let c = 0; c < SUDOKU_GRID_SIZE; c++) {
+      if (sudokuPuzzle.grid[r][c].value === 0) return [r, c];
+    }
+  }
+
+  return null;
+};
+
 export const useHint = () => {
+  if (sudokuPuzzle.finished || sudokuPuzzle.hintsUsed >= MAX_HINTS) return;
+
+  const target = findHintTarget();
+  if (!target) return;
+  const [row, col] = target;
+
+  pushHistory();
+
   const deduction =
     BASE_HINT_DEDUCTION + sudokuPuzzle.hintsUsed * HINT_DEDUCTION_INCREMENT;
   sudokuPuzzle.score -= deduction;
   sudokuPuzzle.hintsUsed++;
+  markScored(row, col);
 
-  for (let row = 0; row < SUDOKU_GRID_SIZE; row++) {
-    for (let col = 0; col < SUDOKU_GRID_SIZE; col++) {
-      if (sudokuPuzzle.grid[row][col].value === 0) {
-        sudokuPuzzle.grid[row][col] = {
-          ...sudokuPuzzle.solution[row][col],
-          prefilled: false,
-        };
+  sudokuPuzzle.grid[row][col] = {
+    ...sudokuPuzzle.solution[row][col],
+    prefilled: false,
+  };
+  recalculateErrors(row, col, 0, sudokuPuzzle.grid[row][col].value);
+  sudokuPuzzle.notice = `Hint: row ${row + 1}, column ${col + 1} is ${sudokuPuzzle.grid[row][col].value}. Cost ${deduction} points.`;
 
-        checkAndFinishGame();
+  checkAndFinishGame();
 
-        sudokuPuzzle.grid[row][col].highlight = true;
-        setTimeout(() => {
-          sudokuPuzzle.grid[row][col].highlight = false;
-        }, 2000);
-
-        return;
-      }
-    }
-  }
+  sudokuPuzzle.grid[row][col].highlight = true;
+  setTimeout(() => {
+    sudokuPuzzle.grid[row][col].highlight = false;
+  }, 2000);
 };
 
 const clearPreviousErrors = (
@@ -117,7 +159,7 @@ const clearPreviousErrors = (
     if (i !== col && sudokuPuzzle.grid[row][i].value === oldValue) {
       sudokuPuzzle.grid[row][i].error = false;
     }
-    if ((i !== row && sudokuPuzzle.grid[i][col].value) === oldValue) {
+    if (i !== row && sudokuPuzzle.grid[i][col].value === oldValue) {
       sudokuPuzzle.grid[i][col].error = false;
     }
   }
@@ -191,8 +233,35 @@ const recalculateErrors = (
   checkNewValueConflicts(row, col, newValue);
 };
 
-const deepCloneGrid = () => {
+const deepCloneGrid = (): SudokuCell[][] => {
   return JSON.parse(JSON.stringify(sudokuPuzzle.grid));
+};
+
+const takeSnapshot = (): Snapshot => ({
+  grid: deepCloneGrid(),
+  score: sudokuPuzzle.score,
+  hintsUsed: sudokuPuzzle.hintsUsed,
+  scoredCells: [...sudokuPuzzle.scoredCells],
+});
+
+const restoreSnapshot = (snapshot: Snapshot) => {
+  sudokuPuzzle.grid = snapshot.grid;
+  sudokuPuzzle.score = snapshot.score;
+  sudokuPuzzle.hintsUsed = snapshot.hintsUsed;
+  sudokuPuzzle.scoredCells = snapshot.scoredCells;
+  sudokuPuzzle.notice = '';
+};
+
+const pushHistory = () => {
+  sudokuPuzzle.history.push(takeSnapshot());
+  sudokuPuzzle.future = [];
+};
+
+const markScored = (row: number, col: number) => {
+  const key = cellKey(row, col);
+  if (!sudokuPuzzle.scoredCells.includes(key)) {
+    sudokuPuzzle.scoredCells.push(key);
+  }
 };
 
 export const updateCell = (
@@ -200,10 +269,12 @@ export const updateCell = (
   col: number,
   newValue: number | null,
 ) => {
+  if (sudokuPuzzle.finished) return;
+
   const oldValue = sudokuPuzzle.grid[row][col].value;
 
-  sudokuPuzzle.history.push(deepCloneGrid());
-  sudokuPuzzle.future = [];
+  pushHistory();
+  sudokuPuzzle.notice = '';
 
   if (newValue === null) {
     sudokuPuzzle.grid[row][col].value = 0;
@@ -214,12 +285,26 @@ export const updateCell = (
   sudokuPuzzle.grid[row][col].value = newValue;
   recalculateErrors(row, col, oldValue, newValue);
 
-  const correctValue = sudokuPuzzle.solution[row][col].value;
+  if (newValue !== oldValue) {
+    scoreEntry(row, col, newValue);
+  }
 
-  if (newValue === correctValue) {
-    sudokuPuzzle.score += CORRECT_CELL_POINTS;
-  } else if (newValue !== oldValue) {
-    sudokuPuzzle.score -= ERROR_DEDUCTION;
+  checkAndFinishGame();
+};
+
+const scoreEntry = (row: number, col: number, value: number) => {
+  if (value === sudokuPuzzle.solution[row][col].value) {
+    // A cell pays out once, so clearing and retyping it cannot farm points.
+    if (!sudokuPuzzle.scoredCells.includes(cellKey(row, col))) {
+      sudokuPuzzle.score += CORRECT_CELL_POINTS;
+      markScored(row, col);
+    }
+    return;
+  }
+
+  sudokuPuzzle.score -= ERROR_DEDUCTION;
+  if (!sudokuPuzzle.grid[row][col].error) {
+    sudokuPuzzle.notice = `Digit ${value} is not correct here. Minus ${ERROR_DEDUCTION} point.`;
   }
 };
 
@@ -228,23 +313,19 @@ export const setActiveCell = (row: number | null, col: number | null) => {
 };
 
 export const undo = () => {
-  if (sudokuPuzzle.history.length > 0) {
-    const lastState = sudokuPuzzle.history.pop();
-    sudokuPuzzle.future.push(deepCloneGrid());
-    if (lastState) {
-      sudokuPuzzle.grid = lastState;
-    }
-  }
+  if (sudokuPuzzle.finished) return;
+  const previous = sudokuPuzzle.history.pop();
+  if (!previous) return;
+  sudokuPuzzle.future.push(takeSnapshot());
+  restoreSnapshot(previous);
 };
 
 export const redo = () => {
-  if (sudokuPuzzle.future.length > 0) {
-    const lastFutureState = sudokuPuzzle.future.pop();
-    sudokuPuzzle.history.push(deepCloneGrid());
-    if (lastFutureState) {
-      sudokuPuzzle.grid = lastFutureState;
-    }
-  }
+  if (sudokuPuzzle.finished) return;
+  const next = sudokuPuzzle.future.pop();
+  if (!next) return;
+  sudokuPuzzle.history.push(takeSnapshot());
+  restoreSnapshot(next);
 };
 
 const isGridComplete = () => {
@@ -265,18 +346,62 @@ const calculateFinalScore = () => {
   return sudokuPuzzle.score - timer.time;
 };
 
-const showCompletionMessage = () => {
+const checkAndFinishGame = () => {
+  if (sudokuPuzzle.finished || !isGridComplete()) return;
+
+  sudokuPuzzle.finished = true;
+  finalizeTimer();
+  const finalScore = calculateFinalScore();
+  sudokuPuzzle.result = { score: finalScore, time: timer.time };
+  sudokuPuzzle.notice = '';
+  saveScoreToLeaderboard(finalScore, sudokuPuzzle.difficulty);
   addCompleteClass();
-  setTimeout(() => {
-    alert('Congratulations! You solved the Sudoku puzzle!');
-  }, 500);
 };
 
-export const checkAndFinishGame = () => {
-  if (isGridComplete()) {
-    finalizeTimer();
-    const finalScore = calculateFinalScore();
-    saveScoreToLeaderboard(finalScore, sudokuPuzzle.difficulty);
-    showCompletionMessage();
+const toSavedGame = (): SavedGame => ({
+  grid: sudokuPuzzle.grid.map((row) =>
+    row.map((cell) => ({ ...cell, highlight: false })),
+  ),
+  solution: sudokuPuzzle.solution,
+  difficulty: sudokuPuzzle.difficulty,
+  score: sudokuPuzzle.score,
+  hintsUsed: sudokuPuzzle.hintsUsed,
+  scoredCells: sudokuPuzzle.scoredCells,
+  finished: sudokuPuzzle.finished,
+  result: sudokuPuzzle.result,
+  time: timer.time,
+});
+
+const persistGame = () => {
+  if (sudokuPuzzle.difficulty === '') return;
+  saveGame(toSavedGame());
+};
+
+watch(sudokuPuzzle, persistGame, { deep: true });
+watch(() => timer.time, persistGame);
+
+export const resumeSavedGame = () => {
+  const saved = loadSavedGame();
+  if (!saved) return;
+
+  Object.assign(sudokuPuzzle, {
+    grid: saved.grid,
+    solution: saved.solution,
+    difficulty: saved.difficulty,
+    score: saved.score,
+    hintsUsed: saved.hintsUsed,
+    scoredCells: saved.scoredCells,
+    activeCell: { row: null, col: null },
+    history: [],
+    future: [],
+    finished: saved.finished,
+    result: saved.result,
+    notice: '',
+  });
+  timer.time = saved.time;
+
+  if (!saved.finished) {
+    startTimer();
+    setHasTimerStarted(true);
   }
 };

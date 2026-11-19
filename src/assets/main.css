@@ -1,9 +1,33 @@
+@import '@eylulg/ui/fonts.css';
+@import '@eylulg/ui/tokens.css';
+@import '@eylulg/ui/reset.css';
+@import '@eylulg/ui/themes/sudoku.css';
 @import './base.css';
 
 #app {
-  height: 100vh;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   font-weight: normal;
+
+  > main {
+    flex: 1;
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+  }
+}
+
+/* Hidden on screen, still read by screen readers. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

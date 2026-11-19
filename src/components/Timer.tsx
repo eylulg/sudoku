@@ -38,10 +38,11 @@ export default defineComponent({
     return () => (
       <div class='timer-container'>
         <p class='timer-text'>
-          <b>Time Spent:</b> {formattedTime.value}
+          <b>Time:</b> {formattedTime.value}
         </p>
         <button
           class='timer-button'
+          aria-label={timer.isRunning ? 'Pause timer' : 'Resume timer'}
           onClick={toggleTimer}
           disabled={!timer.hasStarted}
         >
