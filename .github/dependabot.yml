@@ -23,8 +23,7 @@ updates:
       test:
         patterns: ['vitest*', '@vitest/*', '@vue/test-utils', 'jsdom']
       build:
-        patterns:
-          ['vite', '@vitejs/*', 'typescript', 'vue-tsc', 'vue', '@vue/tsconfig']
+        patterns: ['vite', '@vitejs/*', 'typescript', 'vue-tsc', 'vue', '@vue/tsconfig']
   - package-ecosystem: github-actions
     directory: /
     schedule:

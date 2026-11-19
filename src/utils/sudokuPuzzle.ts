@@ -15,12 +15,7 @@ export const createEmptyGrid = (): SudokuCell[][] => {
     );
 };
 
-const isGridValid = (
-  grid: SudokuCell[][],
-  row: number,
-  col: number,
-  num: number,
-) => {
+const isGridValid = (grid: SudokuCell[][], row: number, col: number, num: number) => {
   for (let i = 0; i < SUDOKU_GRID_SIZE; i++) {
     if (grid[row][i].value === num || grid[i][col].value === num) {
       return false;
@@ -81,18 +76,14 @@ export const generateFullGrid = () => {
   return grid;
 };
 
-export const VISIBLE_CELL_COUNTS: Record<
-  Exclude<Difficulty, ''>,
-  { min: number; max: number }
-> = {
+export const VISIBLE_CELL_COUNTS: Record<Exclude<Difficulty, ''>, { min: number; max: number }> = {
   beginner: { min: 36, max: 40 },
   intermediate: { min: 32, max: 36 },
   hard: { min: 28, max: 32 },
   expert: { min: 24, max: 28 },
 };
 
-const toValues = (grid: SudokuCell[][]) =>
-  grid.map((row) => row.map((cell) => cell.value));
+const toValues = (grid: SudokuCell[][]) => grid.map((row) => row.map((cell) => cell.value));
 
 /**
  * Counts the solutions of a puzzle, stopping once `limit` is reached.
@@ -175,8 +166,7 @@ export const countSolutions = (values: number[][], limit = 2): number => {
   return count;
 };
 
-export const hasUniqueSolution = (grid: SudokuCell[][]) =>
-  countSolutions(toValues(grid), 2) === 1;
+export const hasUniqueSolution = (grid: SudokuCell[][]) => countSolutions(toValues(grid), 2) === 1;
 
 /**
  * Hides cells of a solved grid until the number of visible cells for the
@@ -193,18 +183,13 @@ export const removeCellsForDifficulty = (
   const values = toValues(result);
 
   const visibleRange =
-    difficulty !== ''
-      ? VISIBLE_CELL_COUNTS[difficulty]
-      : VISIBLE_CELL_COUNTS.beginner;
+    difficulty !== '' ? VISIBLE_CELL_COUNTS[difficulty] : VISIBLE_CELL_COUNTS.beginner;
   const targetVisibleCount = Math.floor(
-    Math.random() * (visibleRange.max - visibleRange.min + 1) +
-      visibleRange.min,
+    Math.random() * (visibleRange.max - visibleRange.min + 1) + visibleRange.min,
   );
 
   const totalCells = SUDOKU_GRID_SIZE * SUDOKU_GRID_SIZE;
-  const positions = shuffleArray(
-    Array.from({ length: totalCells }, (_, index) => index),
-  );
+  const positions = shuffleArray(Array.from({ length: totalCells }, (_, index) => index));
   let visibleCount = totalCells;
 
   for (const position of positions) {

@@ -1,12 +1,7 @@
 export const SUDOKU_GRID_SIZE = 9;
 export const SUDOKU_SUBGRID_SIZE = Math.sqrt(SUDOKU_GRID_SIZE);
 
-export const DIFFICULTIES: readonly Difficulty[] = [
-  'beginner',
-  'intermediate',
-  'hard',
-  'expert',
-];
+export const DIFFICULTIES: readonly Difficulty[] = ['beginner', 'intermediate', 'hard', 'expert'];
 
 export const INITIAL_SCORE = 500;
 export const CORRECT_CELL_POINTS = 5;

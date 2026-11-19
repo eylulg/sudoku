@@ -15,8 +15,7 @@ const STEPS: Record<CellDirection, [number, number]> = {
   right: [0, 1],
 };
 
-const clamp = (value: number) =>
-  Math.min(Math.max(value, 0), SUDOKU_GRID_SIZE - 1);
+const clamp = (value: number) => Math.min(Math.max(value, 0), SUDOKU_GRID_SIZE - 1);
 
 export default defineComponent({
   name: 'SudokuGrid',
@@ -61,9 +60,7 @@ export default defineComponent({
                 key={rowIndex}
                 class={[
                   'grid-row',
-                  applyBorderBottom(rowIndex, sudokuPuzzle.grid.length)
-                    ? 'border-bottom'
-                    : '',
+                  applyBorderBottom(rowIndex, sudokuPuzzle.grid.length) ? 'border-bottom' : '',
                 ]}
               >
                 {row.map((cell, colIndex) => (
@@ -73,10 +70,7 @@ export default defineComponent({
                     rowLength={row.length}
                     rowIndex={rowIndex}
                     colIndex={colIndex}
-                    isTabStop={
-                      focused.value.row === rowIndex &&
-                      focused.value.col === colIndex
-                    }
+                    isTabStop={focused.value.row === rowIndex && focused.value.col === colIndex}
                     onNavigate={navigate}
                     onCellFocus={handleCellFocus}
                   />

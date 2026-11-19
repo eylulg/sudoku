@@ -18,9 +18,7 @@ describe('theme', () => {
 
     toggleTheme();
 
-    expect(document.documentElement.classList.contains('dark-mode')).toBe(
-      false,
-    );
+    expect(document.documentElement.classList.contains('dark-mode')).toBe(false);
     expect(localStorage.getItem('eylulg-ui-theme')).toBe('light');
   });
 

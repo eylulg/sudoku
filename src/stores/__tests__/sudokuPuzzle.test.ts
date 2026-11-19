@@ -20,8 +20,7 @@ import {
   INITIAL_SCORE,
 } from '@/constants/sudoku';
 
-const clone = (grid: SudokuCell[][]) =>
-  grid.map((row) => row.map((cell) => ({ ...cell })));
+const clone = (grid: SudokuCell[][]) => grid.map((row) => row.map((cell) => ({ ...cell })));
 
 /** Loads a solved grid with the given cells cleared, bypassing the generator. */
 const loadPuzzle = (emptyCells: Array<[number, number]>) => {
@@ -149,8 +148,7 @@ describe('sudoku puzzle store', () => {
       useHint();
       useHint();
 
-      const expectedDeduction =
-        3 * BASE_HINT_DEDUCTION + (0 + 1 + 2) * HINT_DEDUCTION_INCREMENT;
+      const expectedDeduction = 3 * BASE_HINT_DEDUCTION + (0 + 1 + 2) * HINT_DEDUCTION_INCREMENT;
       expect(sudokuPuzzle.score).toBe(INITIAL_SCORE - expectedDeduction);
       expect(sudokuPuzzle.hintsUsed).toBe(3);
       expect(sudokuPuzzle.grid[0][3].value).toBe(solution[0][3].value);
@@ -233,9 +231,7 @@ describe('sudoku puzzle store', () => {
       expect(sudokuPuzzle.score).toBe(INITIAL_SCORE);
       expect(sudokuPuzzle.hintsUsed).toBe(0);
       expect(timer.isRunning).toBe(true);
-      const visible = sudokuPuzzle.grid
-        .flat()
-        .filter((cell) => cell.value !== 0).length;
+      const visible = sudokuPuzzle.grid.flat().filter((cell) => cell.value !== 0).length;
       expect(visible).toBeGreaterThanOrEqual(24);
     });
   });

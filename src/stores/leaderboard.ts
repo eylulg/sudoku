@@ -4,10 +4,7 @@ import { getLeaderboard, saveLeaderboard } from '@/utils/leaderboard';
 
 export const leaderboard = ref(getLeaderboard());
 
-export const saveScoreToLeaderboard = (
-  score: number,
-  difficulty: Difficulty,
-) => {
+export const saveScoreToLeaderboard = (score: number, difficulty: Difficulty) => {
   if (difficulty === '') return;
 
   const currentLeaderboard = leaderboard.value;

@@ -16,17 +16,13 @@ const DIGITS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const sorted = (values: number[]) => [...values].sort((a, b) => a - b);
 
-const rowsOf = (grid: SudokuCell[][]) =>
-  grid.map((row) => row.map((cell) => cell.value));
-const colsOf = (grid: SudokuCell[][]) =>
-  DIGITS.map((_, col) => grid.map((row) => row[col].value));
+const rowsOf = (grid: SudokuCell[][]) => grid.map((row) => row.map((cell) => cell.value));
+const colsOf = (grid: SudokuCell[][]) => DIGITS.map((_, col) => grid.map((row) => row[col].value));
 const boxesOf = (grid: SudokuCell[][]) =>
   DIGITS.map((_, box) => {
     const startRow = Math.floor(box / 3) * 3;
     const startCol = (box % 3) * 3;
-    return [0, 1, 2].flatMap((r) =>
-      [0, 1, 2].map((c) => grid[startRow + r][startCol + c].value),
-    );
+    return [0, 1, 2].flatMap((r) => [0, 1, 2].map((c) => grid[startRow + r][startCol + c].value));
   });
 
 const visibleCount = (grid: SudokuCell[][]) =>
@@ -46,11 +42,7 @@ describe('generateFullGrid', () => {
     'produces a valid complete grid (run %i)',
     () => {
       const grid = generateFullGrid();
-      for (const group of [
-        ...rowsOf(grid),
-        ...colsOf(grid),
-        ...boxesOf(grid),
-      ]) {
+      for (const group of [...rowsOf(grid), ...colsOf(grid), ...boxesOf(grid)]) {
         expect(sorted(group)).toEqual(DIGITS);
       }
     },
@@ -58,18 +50,14 @@ describe('generateFullGrid', () => {
 
   it('produces different grids', () => {
     const first = JSON.stringify(rowsOf(generateFullGrid()));
-    const others = Array.from({ length: 5 }, () =>
-      JSON.stringify(rowsOf(generateFullGrid())),
-    );
+    const others = Array.from({ length: 5 }, () => JSON.stringify(rowsOf(generateFullGrid())));
     expect(others.some((grid) => grid !== first)).toBe(true);
   });
 });
 
 describe('subgrid helpers', () => {
   it('returns the top left corner of the 3 by 3 box', () => {
-    expect([0, 1, 2, 3, 5, 6, 8].map(getSubgridStartRow)).toEqual([
-      0, 0, 0, 3, 3, 6, 6,
-    ]);
+    expect([0, 1, 2, 3, 5, 6, 8].map(getSubgridStartRow)).toEqual([0, 0, 0, 3, 3, 6, 6]);
     expect(getSubgridStartCol(4)).toBe(3);
   });
 });
@@ -103,42 +91,32 @@ describe('countSolutions', () => {
 });
 
 describe('removeCellsForDifficulty', () => {
-  it.each(DIFFICULTIES)(
-    'keeps a single solution for %s puzzles',
-    (difficulty) => {
-      const solution = generateFullGrid();
-      const puzzle = removeCellsForDifficulty(solution, difficulty);
+  it.each(DIFFICULTIES)('keeps a single solution for %s puzzles', (difficulty) => {
+    const solution = generateFullGrid();
+    const puzzle = removeCellsForDifficulty(solution, difficulty);
 
-      expect(hasUniqueSolution(puzzle)).toBe(true);
+    expect(hasUniqueSolution(puzzle)).toBe(true);
 
-      // Every visible cell matches the solution and is marked as given.
-      const cells = puzzle.flatMap((row, r) =>
-        row.map((cell, c) => ({ cell, expected: solution[r][c].value })),
-      );
-      const visible = cells.filter(({ cell }) => cell.value !== 0);
-      const hidden = cells.filter(({ cell }) => cell.value === 0);
-      expect(
-        visible.every(({ cell, expected }) => cell.value === expected),
-      ).toBe(true);
-      expect(visible.every(({ cell }) => cell.prefilled)).toBe(true);
-      expect(hidden.every(({ cell }) => !cell.prefilled)).toBe(true);
-    },
-  );
+    // Every visible cell matches the solution and is marked as given.
+    const cells = puzzle.flatMap((row, r) =>
+      row.map((cell, c) => ({ cell, expected: solution[r][c].value })),
+    );
+    const visible = cells.filter(({ cell }) => cell.value !== 0);
+    const hidden = cells.filter(({ cell }) => cell.value === 0);
+    expect(visible.every(({ cell, expected }) => cell.value === expected)).toBe(true);
+    expect(visible.every(({ cell }) => cell.prefilled)).toBe(true);
+    expect(hidden.every(({ cell }) => !cell.prefilled)).toBe(true);
+  });
 
-  it.each(DIFFICULTIES)(
-    'shows about the right number of cells for %s puzzles',
-    (difficulty) => {
-      const range = VISIBLE_CELL_COUNTS[difficulty as Exclude<Difficulty, ''>];
-      for (let i = 0; i < 5; i++) {
-        const count = visibleCount(
-          removeCellsForDifficulty(generateFullGrid(), difficulty),
-        );
-        expect(count).toBeGreaterThanOrEqual(range.min);
-        // Uniqueness can stop removal a few cells early on the hardest levels.
-        expect(count).toBeLessThanOrEqual(range.max + 4);
-      }
-    },
-  );
+  it.each(DIFFICULTIES)('shows about the right number of cells for %s puzzles', (difficulty) => {
+    const range = VISIBLE_CELL_COUNTS[difficulty as Exclude<Difficulty, ''>];
+    for (let i = 0; i < 5; i++) {
+      const count = visibleCount(removeCellsForDifficulty(generateFullGrid(), difficulty));
+      expect(count).toBeGreaterThanOrEqual(range.min);
+      // Uniqueness can stop removal a few cells early on the hardest levels.
+      expect(count).toBeLessThanOrEqual(range.max + 4);
+    }
+  });
 
   it('does not change the solved grid it is given', () => {
     const solution = generateFullGrid();
@@ -148,9 +126,7 @@ describe('removeCellsForDifficulty', () => {
   });
 
   it('falls back to beginner counts when no difficulty is set', () => {
-    const count = visibleCount(
-      removeCellsForDifficulty(generateFullGrid(), ''),
-    );
+    const count = visibleCount(removeCellsForDifficulty(generateFullGrid(), ''));
     expect(count).toBeGreaterThanOrEqual(VISIBLE_CELL_COUNTS.beginner.min);
     expect(count).toBeLessThanOrEqual(VISIBLE_CELL_COUNTS.beginner.max);
   });

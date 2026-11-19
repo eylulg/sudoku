@@ -10,9 +10,7 @@ const Leaderboard = defineComponent({
   name: 'Leaderboard',
   setup() {
     const filteredEntries = computed(() => {
-      return Object.entries(leaderboard.value).filter(
-        ([_, scores]) => scores.length > 0,
-      );
+      return Object.entries(leaderboard.value).filter(([_, scores]) => scores.length > 0);
     });
 
     return () => (

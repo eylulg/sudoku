@@ -1,13 +1,7 @@
 import { reactive, watch } from 'vue';
 
 import { saveScoreToLeaderboard } from './leaderboard';
-import {
-  resetTimer,
-  setHasTimerStarted,
-  startTimer,
-  stopTimer,
-  timer,
-} from './timer';
+import { resetTimer, setHasTimerStarted, startTimer, stopTimer, timer } from './timer';
 
 import { loadSavedGame, saveGame, type SavedGame } from '@/utils/savedGame';
 
@@ -129,8 +123,7 @@ export const useHint = () => {
 
   pushHistory();
 
-  const deduction =
-    BASE_HINT_DEDUCTION + sudokuPuzzle.hintsUsed * HINT_DEDUCTION_INCREMENT;
+  const deduction = BASE_HINT_DEDUCTION + sudokuPuzzle.hintsUsed * HINT_DEDUCTION_INCREMENT;
   sudokuPuzzle.score -= deduction;
   sudokuPuzzle.hintsUsed++;
   markScored(row, col);
@@ -150,11 +143,7 @@ export const useHint = () => {
   }, 2000);
 };
 
-const clearPreviousErrors = (
-  row: number,
-  col: number,
-  oldValue: number | null,
-) => {
+const clearPreviousErrors = (row: number, col: number, oldValue: number | null) => {
   for (let i = 0; i < SUDOKU_GRID_SIZE; i++) {
     if (i !== col && sudokuPuzzle.grid[row][i].value === oldValue) {
       sudokuPuzzle.grid[row][i].error = false;
@@ -183,11 +172,7 @@ const clearPreviousErrors = (
   sudokuPuzzle.grid[row][col].error = false;
 };
 
-const checkNewValueConflicts = (
-  row: number,
-  col: number,
-  newValue: number | null,
-) => {
+const checkNewValueConflicts = (row: number, col: number, newValue: number | null) => {
   if (newValue === null) return;
 
   let hasConflict = false;
@@ -264,11 +249,7 @@ const markScored = (row: number, col: number) => {
   }
 };
 
-export const updateCell = (
-  row: number,
-  col: number,
-  newValue: number | null,
-) => {
+export const updateCell = (row: number, col: number, newValue: number | null) => {
   if (sudokuPuzzle.finished) return;
 
   const oldValue = sudokuPuzzle.grid[row][col].value;
@@ -330,10 +311,7 @@ export const redo = () => {
 
 const isGridComplete = () => {
   return sudokuPuzzle.grid.every((row, rowIndex) =>
-    row.every(
-      (cell, colIndex) =>
-        cell.value === sudokuPuzzle.solution[rowIndex][colIndex].value,
-    ),
+    row.every((cell, colIndex) => cell.value === sudokuPuzzle.solution[rowIndex][colIndex].value),
   );
 };
 
@@ -359,9 +337,7 @@ const checkAndFinishGame = () => {
 };
 
 const toSavedGame = (): SavedGame => ({
-  grid: sudokuPuzzle.grid.map((row) =>
-    row.map((cell) => ({ ...cell, highlight: false })),
-  ),
+  grid: sudokuPuzzle.grid.map((row) => row.map((cell) => ({ ...cell, highlight: false }))),
   solution: sudokuPuzzle.solution,
   difficulty: sudokuPuzzle.difficulty,
   score: sudokuPuzzle.score,

@@ -46,28 +46,18 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const handleCellChange = (
-      row: number,
-      col: number,
-      value: number | null,
-    ) => {
+    const handleCellChange = (row: number, col: number, value: number | null) => {
       updateCell(row, col, value);
     };
 
     const isValidInput = (input: string) => /^[1-9]?$/.test(input);
 
-    const handleInput = (
-      e: Event,
-      row: number,
-      col: number,
-      currentValue: number,
-    ) => {
+    const handleInput = (e: Event, row: number, col: number, currentValue: number) => {
       const inputElement = e.target as HTMLInputElement;
       const inputValue = inputElement.value;
 
       if (isValidInput(inputValue)) {
-        const numericValue =
-          inputValue === '' ? null : parseInt(inputValue, 10);
+        const numericValue = inputValue === '' ? null : parseInt(inputValue, 10);
         handleCellChange(row, col, numericValue);
       } else {
         inputElement.value = currentValue === 0 ? '' : String(currentValue);
@@ -124,9 +114,7 @@ export default defineComponent({
         readonly={props.cell.prefilled || sudokuPuzzle.finished}
         onFocus={handleFocus}
         onKeydown={handleKeydown}
-        onInput={(e) =>
-          handleInput(e, props.rowIndex, props.colIndex, props.cell.value)
-        }
+        onInput={(e) => handleInput(e, props.rowIndex, props.colIndex, props.cell.value)}
       />
     );
   },

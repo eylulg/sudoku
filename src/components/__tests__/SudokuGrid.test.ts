@@ -28,12 +28,8 @@ describe('SudokuGrid keyboard and labels', () => {
   afterEach(() => wrapper.unmount());
 
   it('labels cells with their position and state', () => {
-    expect(cell(0, 0).getAttribute('aria-label')).toBe(
-      'Row 1, column 1, given',
-    );
-    expect(cell(0, 1).getAttribute('aria-label')).toBe(
-      'Row 1, column 2, empty',
-    );
+    expect(cell(0, 0).getAttribute('aria-label')).toBe('Row 1, column 1, given');
+    expect(cell(0, 1).getAttribute('aria-label')).toBe('Row 1, column 2, empty');
     expect(cell(0, 0).readOnly).toBe(true);
     expect(cell(0, 1).readOnly).toBe(false);
   });
