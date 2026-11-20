@@ -7,6 +7,18 @@
   border-bottom: 1px solid var(--ui-border-subtle);
   background-color: var(--ui-bg-secondary);
 
+  .site-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand-logo {
+    flex: none;
+    fill: var(--ui-logo);
+    stroke: var(--ui-logo);
+  }
+
   .site-title {
     margin: 0;
     font-size: var(--text-lg);
